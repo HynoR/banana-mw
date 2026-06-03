@@ -1,0 +1,38 @@
+# 构建输出
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 测试文件
+*_test.go
+*.test
+*.out
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# 文档
+README.md
+*.md
+
+# 其他
+.DS_Store
+*.log
+tmp/
+*.tmp
+
+
+
+

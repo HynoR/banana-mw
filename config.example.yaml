@@ -1,0 +1,74 @@
+# banana-mw 配置模板。首次部署请复制到 data/config.yaml 后按环境修改：
+#   cp config.example.yaml data/config.yaml
+
+# 上游反向代理目标（必填）。不能使用占位地址 https://example.com，否则进程会拒绝启动。
+upstream: https://example.com
+
+# 允许进入代理链的路径前缀；未匹配的路径直接返回 403。
+allowed_prefixes:
+  - /api/v1
+
+# 200 响应（body + header）内存缓存 TTL。
+cache_ttl_200: 5m
+# 4xx 失败结果（仅记 key，固定返回 forbidden）内存缓存 TTL。
+cache_ttl_4xx: 10m
+# 为 true 时把 query 纳入缓存 key（排除 token、s 参数）；默认 false。
+cache_include_query: false
+# 200 响应体写入内存缓存的最大字节数；超过则仍透传客户端但不缓存。默认 2097152（2MB）。
+cache_max_body_bytes: 2097152
+# 为 true 时 ClientIP 信任 X-Forwarded-For / X-Real-IP（前置可信代理时开启）；默认 false。
+trust_proxy: false
+
+# 反向代理服务监听端口；若修改需同步 docker-compose 端口映射。
+port: "8080"
+# 管理面板独立监听端口（仅 is_admin=1 时启用），必须与 port 不同，
+# 以便把管理入口与公网代理端口分离；生产环境应仅对内网开放此端口。
+admin_port: "8081"
+# 日志等级：info（默认）、debug（每条代理请求一条排障日志）、warn、error
+log_level: info
+
+# 为 1 时启用 Redis secure token 校验；未登记 token 返回 401。
+secure: 0
+# secure token 在 Redis 中的 TTL。
+secure_time: 30m
+# secure token 在 Redis 中的 key 前缀（后接 token）；留空则用内置默认前缀。
+secure_redis_key_prefix: "secure_session::user::"
+# Redis 故障时 secure 行为：closed（默认，Redis 错误等同未登记→401）或 open（Redis 错误时放行）。
+secure_fail_mode: closed
+# Redis 地址。容器访问宿主机 Redis 时可用 host.docker.internal:6379。
+token_redis_addr: localhost:6379
+token_redis_pwd: ""
+token_redis_db: 0
+redis_dial_timeout: 3s
+redis_read_timeout: 1s
+redis_write_timeout: 1s
+
+# 为 1 时启用 48 小时访问统计（需 Redis）。
+stats_enabled: 0
+# 统计路径前缀；可为具体前缀（如 /api/v1）或 * 表示全部。
+stats_prefix: /api/v1
+# 统计异步写入队列容量；满时丢弃事件，不阻塞请求。
+stats_queue_size: 10000
+# 统计写 Redis 的后台 worker 数量。
+stats_workers: 2
+stats_write_timeout: 1s
+
+# 为 1 时在 admin_port 上额外启动管理页面/API（与 port 上的反向代理分离）；
+# 为 0 时完全不暴露管理入口，只跑反向代理。
+is_admin: 0
+# 管理 API Bearer token；留空则管理接口返回 503。
+admin_token: ""
+
+# 低频整 key 清理：count 低于此阈值且长期无访问才可能删除；0 表示禁用。
+stats_clean_min_count: 5
+stats_clean_inactive_time: 48h
+# stats 后台清理任务扫描间隔（小时）。
+stats_clean_interval_hours: 1
+
+# HTTP Server 超时与优雅退出。
+read_header_timeout: 5s
+read_timeout: 30s
+# 0 表示不限制写超时。
+write_timeout: 30s
+idle_timeout: 120s
+shutdown_timeout: 10s

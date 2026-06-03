@@ -1,0 +1,20 @@
+services:
+  banana-mw:
+    image: banana-mw:latest
+    container_name: banana-mw
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./data:/app/data:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # host 网络下 config 中的 port（反向代理）与 admin_port（is_admin=1 时的管理面板）
+    # 直接监听在宿主机上；生产环境请用防火墙仅对内网放行 admin_port。
+    network_mode: host
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "10"

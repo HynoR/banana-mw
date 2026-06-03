@@ -1,0 +1,23 @@
+# 构建产物（保留说明文档）
+build/*
+!build/README.md
+
+# 防止误输出到项目根目录
+/banana-mw
+logs/
+logs2/
+panic.txt
+
+config.json
+config2.json
+config.yaml
+
+# 运行时数据（保留说明文档）
+data/*
+!data/README.md
+
+docs/
+
+.DS_Store
+*.tmp
+*.upload.tmp
