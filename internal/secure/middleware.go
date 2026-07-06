@@ -77,7 +77,7 @@ func Middleware(cfg *config.Config) func(http.Handler) http.Handler {
 				middleware.MarkBlocked(r.Context(), "secure", http.StatusUnauthorized)
 				attrs := []any{"method", r.Method, "path", r.URL.Path, "client_ip", requtil.ClientIP(r)}
 				attrs = append(attrs, requtil.TokenLogAttrs(token)...)
-				slog.Warn("secure token not found", attrs...)
+				slog.Debug("secure token not found", attrs...)
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
