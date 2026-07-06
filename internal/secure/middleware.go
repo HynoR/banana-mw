@@ -73,14 +73,11 @@ func Middleware(cfg *config.Config) func(http.Handler) http.Handler {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			case SessionMiss:
-				if middleware.DebugRequests() {
-					return
-				}
 				middleware.MarkSecure(r.Context(), "not_found")
 				middleware.MarkBlocked(r.Context(), "secure", http.StatusUnauthorized)
 				attrs := []any{"method", r.Method, "path", r.URL.Path, "client_ip", requtil.ClientIP(r)}
 				attrs = append(attrs, requtil.TokenLogAttrs(token)...)
-				slog.Info("secure token not found", attrs...)
+				//slog.Info("secure token not found", attrs...)
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
